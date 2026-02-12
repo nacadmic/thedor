@@ -194,10 +194,24 @@
   <script>
     const API = '';
     const TOKEN_KEY = 'admin_token';
+    const SESSION_LOAD_KEY = 'admin_last_load';
+    const SESSION_LOAD_MAX_AGE_MS = 4000; // 새로고침이면 4초 이내에 다시 로드됨. 그보다 오래됐으면 새 탭/복원
     let publicConfig = { kakaoLogin: false, kakaoRestKey: '', redirectUri: '' };
 
     function getToken() { return sessionStorage.getItem(TOKEN_KEY); }
     function setToken(t) { if (t) sessionStorage.setItem(TOKEN_KEY, t); else sessionStorage.removeItem(TOKEN_KEY); }
+
+    (function ensureSessionBound() {
+      const last = sessionStorage.getItem(SESSION_LOAD_KEY);
+      const now = Date.now();
+      if (!last || (now - parseInt(last, 10)) > SESSION_LOAD_MAX_AGE_MS) {
+        sessionStorage.removeItem(TOKEN_KEY);
+      }
+      sessionStorage.setItem(SESSION_LOAD_KEY, String(now));
+      addEventListener('beforeunload', function () {
+        sessionStorage.setItem(SESSION_LOAD_KEY, String(Date.now()));
+      });
+    })();
 
     async function api(path, options = {}) {
       const url = (API || (location.origin + '/api')) + path;
