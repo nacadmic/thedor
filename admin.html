@@ -25,6 +25,8 @@
     .admin-status { font-size: 0.9rem; margin-bottom: 16px; min-height: 1.2em; }
     .admin-status.success { color: #0a0; font-weight: 500; padding: 8px 12px; background: #e8f5e9; border-radius: 8px; display: inline-block; }
     .admin-status.error { color: #c00; }
+    .btn-kakao { width: 100%; background: #FEE500; color: #191919; }
+    .btn-kakao:hover { background: #f0d900; }
   </style>
 </head>
 <body>
@@ -32,8 +34,10 @@
     <div id="loginView" class="login-box">
       <h1>관리자 로그인</h1>
       <p id="loginError" class="login-error" style="display:none;"></p>
-      <input type="password" id="loginPassword" placeholder="비밀번호" autocomplete="current-password">
-      <button type="button" class="btn btn-primary" id="loginBtn" style="width:100%">로그인</button>
+      <div id="kakaoLoginWrap" style="display:none;">
+        <button type="button" class="btn btn-kakao" id="kakaoLoginBtn">카카오로 로그인</button>
+      </div>
+      <p id="loginUnconfigured" class="login-error" style="display:none;">관리자 로그인이 설정되지 않았습니다.</p>
     </div>
 
     <div id="adminView" style="display:none;">
@@ -132,6 +136,7 @@
   <script>
     const API = '';
     const TOKEN_KEY = 'admin_token';
+    let publicConfig = { kakaoLogin: false, kakaoRestKey: '', redirectUri: '' };
 
     function getToken() { return sessionStorage.getItem(TOKEN_KEY); }
     function setToken(t) { if (t) sessionStorage.setItem(TOKEN_KEY, t); else sessionStorage.removeItem(TOKEN_KEY); }
@@ -167,26 +172,46 @@
       return key.split('.').reduce((o, p) => o && o[p], obj);
     }
 
-    // Login
-    document.getElementById('loginBtn').addEventListener('click', async () => {
-      const password = document.getElementById('loginPassword').value.trim();
-      document.getElementById('loginError').style.display = 'none';
-      if (!password) {
-        document.getElementById('loginError').textContent = '비밀번호를 입력하세요.';
-        document.getElementById('loginError').style.display = 'block';
-        return;
-      }
+    // Public config (Kakao only)
+    fetch((API || location.origin + '/api') + '/config')
+      .then((r) => r.json())
+      .then((c) => {
+        publicConfig = c;
+        if (c.kakaoLogin && c.kakaoRestKey && c.redirectUri) {
+          document.getElementById('kakaoLoginWrap').style.display = 'block';
+        } else {
+          document.getElementById('loginUnconfigured').style.display = 'block';
+        }
+      })
+      .catch(() => { document.getElementById('loginUnconfigured').style.display = 'block'; });
+
+    document.getElementById('kakaoLoginBtn').addEventListener('click', () => {
+      if (!publicConfig.kakaoRestKey || !publicConfig.redirectUri) return;
+      const url = 'https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=' +
+        encodeURIComponent(publicConfig.kakaoRestKey) + '&redirect_uri=' +
+        encodeURIComponent(publicConfig.redirectUri) + '&scope=account_email';
+      location.href = url;
+    });
+
+    // Handle return from Kakao: ?code=... (redirect_uri must match what Kakao used)
+    (async function tryKakaoCode() {
+      const params = new URLSearchParams(location.search);
+      const code = params.get('code');
+      if (!code) return;
+      const redirectUri = location.origin + (location.pathname || '/admin');
       try {
-        const { token } = await api('/login', { method: 'POST', body: { password } });
+        const { token } = await api('/auth-kakao', { method: 'POST', body: { code, redirectUri } });
         setToken(token);
+        history.replaceState(null, '', location.pathname || '/admin');
         document.getElementById('loginView').style.display = 'none';
         document.getElementById('adminView').style.display = 'block';
         loadContent();
       } catch (e) {
-        document.getElementById('loginError').textContent = e.data && e.data.error || '로그인 실패';
+        document.getElementById('loginError').textContent = e.data && e.data.error || '카카오 로그인 실패';
         document.getElementById('loginError').style.display = 'block';
+        history.replaceState(null, '', location.pathname || '/admin');
       }
-    });
+    })();
 
     let currentContent = null;
 

@@ -8,6 +8,12 @@ module.exports = async function handler(req, res) {
     return res.status(405).end();
   }
 
+  if (process.env.ALLOWED_ADMIN_EMAILS) {
+    return res.status(403).json({
+      error: '관리자는 카카오 로그인만 사용할 수 있습니다.',
+    });
+  }
+
   const password = process.env.ADMIN_PASSWORD;
   if (!password) {
     return res.status(503).json({
