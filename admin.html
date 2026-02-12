@@ -6,27 +6,44 @@
   <title>관리자 | theodore.</title>
   <link rel="stylesheet" href="/style.css?v=2">
   <style>
-    .admin-wrap { max-width: 720px; margin: 0 auto; padding: 40px 24px; }
-    .admin-section { margin-bottom: 32px; }
-    .admin-section h2 { font-size: 1.1rem; margin-bottom: 12px; color: #333; border-bottom: 1px solid #eee; padding-bottom: 8px; }
-    .admin-field { margin-bottom: 16px; }
-    .admin-field label { display: block; font-size: 0.85rem; color: #666; margin-bottom: 4px; }
-    .admin-field input[type="text"], .admin-field input[type="url"], .admin-field textarea { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
-    .admin-field textarea { min-height: 80px; resize: vertical; }
-    .admin-field .img-preview { max-width: 120px; max-height: 120px; object-fit: cover; border-radius: 8px; margin-top: 8px; }
-    .admin-actions { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
-    .btn { padding: 12px 24px; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 500; }
-    .btn-primary { background: linear-gradient(135deg, #e1306c, #833ab4); color: #fff; }
-    .btn-secondary { background: #f0f0f0; color: #333; }
-    .login-box { max-width: 360px; margin: 80px auto; padding: 32px; border: 1px solid #eee; border-radius: 16px; box-shadow: 0 12px 48px rgba(0,0,0,0.08); }
-    .login-box h1 { font-size: 1.25rem; margin-bottom: 20px; }
-    .login-box input { width: 100%; padding: 12px; margin-bottom: 16px; border: 1px solid #ddd; border-radius: 8px; }
+    :root { --admin-bg: #f8f7f5; --admin-card: #fff; --admin-border: #e8e6e3; --admin-text: #2c2c2c; --admin-muted: #6b6b6b; --admin-accent: #833ab4; --admin-accent2: #e1306c; }
+    body { background: var(--admin-bg); font-family: 'Noto Sans KR', sans-serif; color: var(--admin-text); }
+    .admin-wrap { max-width: 680px; margin: 0 auto; padding: 48px 24px; }
+    .admin-section { background: var(--admin-card); border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); border: 1px solid var(--admin-border); }
+    .admin-section h2 { font-size: 0.95rem; font-weight: 600; margin-bottom: 18px; color: var(--admin-text); letter-spacing: -0.02em; padding-bottom: 10px; border-bottom: 1px solid var(--admin-border); }
+    .admin-field { margin-bottom: 18px; }
+    .admin-field:last-child { margin-bottom: 0; }
+    .admin-field label { display: block; font-size: 0.8rem; color: var(--admin-muted); margin-bottom: 6px; font-weight: 500; }
+    .admin-field input[type="text"], .admin-field input[type="url"], .admin-field textarea { width: 100%; padding: 12px 14px; border: 1px solid var(--admin-border); border-radius: 10px; font-size: 0.95rem; background: #fafafa; transition: border-color 0.2s; }
+    .admin-field input:focus, .admin-field textarea:focus { outline: none; border-color: var(--admin-accent); background: #fff; }
+    .admin-field textarea { min-height: 120px; resize: vertical; }
+    .admin-actions { display: flex; gap: 12px; margin-top: 28px; flex-wrap: wrap; }
+    .btn { padding: 14px 28px; border: none; border-radius: 10px; font-size: 0.95rem; cursor: pointer; font-weight: 500; transition: opacity 0.2s; }
+    .btn:hover { opacity: 0.9; }
+    .btn-primary { background: linear-gradient(135deg, var(--admin-accent2), var(--admin-accent)); color: #fff; }
+    .btn-secondary { background: var(--admin-card); color: var(--admin-text); border: 1px solid var(--admin-border); }
+    .login-box { max-width: 380px; margin: 100px auto; padding: 40px; background: var(--admin-card); border-radius: 20px; box-shadow: 0 16px 56px rgba(0,0,0,0.06); border: 1px solid var(--admin-border); }
+    .login-box h1 { font-size: 1.35rem; font-weight: 600; margin-bottom: 24px; letter-spacing: -0.02em; }
+    .login-box input { width: 100%; padding: 14px; margin-bottom: 16px; border: 1px solid var(--admin-border); border-radius: 10px; font-size: 1rem; }
     .login-error { color: #c00; font-size: 0.9rem; margin-bottom: 12px; }
-    .admin-status { font-size: 0.9rem; margin-bottom: 16px; min-height: 1.2em; }
-    .admin-status.success { color: #0a0; font-weight: 500; padding: 8px 12px; background: #e8f5e9; border-radius: 8px; display: inline-block; }
+    .admin-status { font-size: 0.9rem; margin-bottom: 20px; min-height: 1.2em; }
+    .admin-status.success { color: #0d7d2b; font-weight: 500; padding: 10px 14px; background: #e8f5e9; border-radius: 10px; display: inline-block; }
     .admin-status.error { color: #c00; }
-    .btn-kakao { width: 100%; background: #FEE500; color: #191919; }
+    .btn-kakao { width: 100%; background: #FEE500; color: #191919; padding: 14px; }
     .btn-kakao:hover { background: #f0d900; }
+    #adminView h1 { font-size: 1.5rem; font-weight: 600; margin-bottom: 28px; letter-spacing: -0.03em; }
+    .gallery-upload-zone { border: 2px dashed var(--admin-border); border-radius: 16px; padding: 32px; text-align: center; background: #fafafa; cursor: pointer; transition: border-color 0.2s, background 0.2s; margin-bottom: 20px; }
+    .gallery-upload-zone:hover, .gallery-upload-zone.dragover { border-color: var(--admin-accent); background: #f5f0fa; }
+    .gallery-upload-zone p { margin: 0; color: var(--admin-muted); font-size: 0.9rem; }
+    .gallery-upload-zone .zone-icon { font-size: 2rem; margin-bottom: 8px; opacity: 0.6; }
+    .gallery-thumbs { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+    .gallery-thumb { aspect-ratio: 1; border-radius: 10px; overflow: hidden; background: var(--admin-border); position: relative; cursor: pointer; border: 2px solid transparent; transition: border-color 0.2s; }
+    .gallery-thumb:hover { border-color: var(--admin-accent); }
+    .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .gallery-thumb .thumb-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--admin-muted); font-size: 1.2rem; }
+    .gallery-thumb .thumb-num { position: absolute; bottom: 4px; right: 6px; background: rgba(0,0,0,0.5); color: #fff; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; }
+    .gallery-thumb input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    input.gallery-url-hidden { position: absolute; left: -9999px; }
   </style>
 </head>
 <body>
@@ -106,8 +123,13 @@
 
       <section class="admin-section">
         <h2>갤러리 이미지 (1~24)</h2>
-        <p class="admin-field" style="margin-bottom:8px;color:#666;font-size:0.85rem">최대 24장까지 등록할 수 있습니다. URL 입력 또는 파일 업로드.</p>
-        <div id="galleryImagesFields"></div>
+        <p class="admin-field" style="margin-bottom:12px;color:var(--admin-muted);font-size:0.85rem">아래 영역에 클릭하거나 이미지를 끌어다 놓으면 빈 슬롯부터 순서대로 채워집니다.</p>
+        <div class="gallery-upload-zone" id="galleryUploadZone">
+          <span class="zone-icon">📷</span>
+          <p>클릭하거나 이미지를 끌어다 놓으세요</p>
+        </div>
+        <input type="file" id="galleryZoneFileInput" accept="image/*" multiple style="display:none">
+        <div id="galleryThumbs" class="gallery-thumbs"></div>
       </section>
 
       <section class="admin-section">
@@ -231,6 +253,7 @@
     function fillForm(data) {
       document.querySelectorAll('[data-key]').forEach(el => {
         const key = el.getAttribute('data-key');
+        if (key && key.startsWith('home.galleryImages.')) return;
         let val = getByKey(data, key);
         if (key === 'about.body' && (val === undefined || val === null) && data.about) {
           const p = data.about;
@@ -241,47 +264,109 @@
           else el.value = val;
         }
       });
-      const wrap = document.getElementById('galleryImagesFields');
+      const wrap = document.getElementById('galleryThumbs');
       wrap.innerHTML = '';
       const imgs = (data.home && data.home.galleryImages) || {};
       for (let i = 1; i <= 24; i++) {
+        const url = imgs[String(i)] || '';
         const div = document.createElement('div');
-        div.className = 'admin-field';
+        div.className = 'gallery-thumb';
         div.innerHTML = `
-          <label>이미지 ${i}</label>
-          <input type="text" id="home.galleryImages.${i}" data-key="home.galleryImages.${i}" placeholder="URL 또는 새 파일 선택" style="margin-bottom:4px">
-          <input type="file" accept="image/*" data-key="${i}" style="display:block; margin-top:4px">
-          <img class="img-preview" id="preview-${i}" alt="" style="display:none">
+          <input type="text" class="gallery-url-hidden" id="home.galleryImages.${i}" data-key="home.galleryImages.${i}">
+          <div class="thumb-placeholder">+</div>
+          <span class="thumb-num">${i}</span>
+          <input type="file" accept="image/*" data-slot="${i}">
         `;
-        const urlInput = div.querySelector('input[type="text"]');
-        const fileInput = div.querySelector('input[type="file"]');
-        const preview = div.querySelector('.img-preview');
-        urlInput.value = imgs[String(i)] || '';
-        if (urlInput.value) {
-          preview.src = urlInput.value;
-          preview.style.display = 'block';
+        const urlInput = div.querySelector('input[data-key]');
+        const placeholder = div.querySelector('.thumb-placeholder');
+        if (urlInput) urlInput.value = url;
+        if (url) {
+          const img = document.createElement('img');
+          img.alt = '';
+          img.src = url;
+          placeholder.replaceWith(img);
         }
-        fileInput.addEventListener('change', async () => {
-          const file = fileInput.files[0];
-          if (!file) return;
+        wrap.appendChild(div);
+      }
+      bindGalleryUpload();
+    }
+
+    function firstEmptySlot() {
+      for (let i = 1; i <= 24; i++) {
+        const el = document.querySelector(`input[data-key="home.galleryImages.${i}"]`);
+        if (!el || !el.value || !el.value.trim()) return i;
+      }
+      return 25;
+    }
+
+    function setSlotPreview(slot, url) {
+      const wrap = document.getElementById('galleryThumbs');
+      const thumb = wrap && wrap.querySelector(`.gallery-thumb input[data-slot="${slot}"]`) && wrap.querySelector(`.gallery-thumb input[data-slot="${slot}"]`).closest('.gallery-thumb');
+      if (!thumb) return;
+      const urlInput = thumb.querySelector('input[data-key]');
+      const placeholder = thumb.querySelector('.thumb-placeholder');
+      let img = thumb.querySelector('img');
+      if (urlInput) urlInput.value = url;
+      if (placeholder) placeholder.remove();
+      if (!img) {
+        img = document.createElement('img');
+        img.alt = '';
+        thumb.insertBefore(img, thumb.querySelector('.thumb-num'));
+      }
+      img.src = url;
+    }
+
+    function bindGalleryUpload() {
+      const zone = document.getElementById('galleryUploadZone');
+      const zoneInput = document.getElementById('galleryZoneFileInput');
+      if (!zone || !zoneInput) return;
+      zone.onclick = () => zoneInput.click();
+      zone.ondragover = (e) => { e.preventDefault(); zone.classList.add('dragover'); };
+      zone.ondragleave = () => zone.classList.remove('dragover');
+      zone.ondrop = (e) => {
+        e.preventDefault();
+        zone.classList.remove('dragover');
+        if (e.dataTransfer.files.length) zoneInput.files = e.dataTransfer.files;
+        zoneInput.dispatchEvent(new Event('change'));
+      };
+      zoneInput.onchange = async () => {
+        const files = Array.from(zoneInput.files || []);
+        zoneInput.value = '';
+        let nextSlot = firstEmptySlot();
+        for (const file of files) {
+          if (!file.type.startsWith('image/')) continue;
+          if (nextSlot > 24) break;
+          const slot = nextSlot++;
           const reader = new FileReader();
           reader.onload = async () => {
             try {
-              const { url } = await api('/upload', {
-                method: 'POST',
-                body: { key: String(i), dataUrl: reader.result },
-              });
-              urlInput.value = url;
-              preview.src = url;
-              preview.style.display = 'block';
+              const { url } = await api('/upload', { method: 'POST', body: { key: String(slot), dataUrl: reader.result } });
+              setSlotPreview(slot, url);
             } catch (err) {
               alert('업로드 실패: ' + (err.data && err.data.error || err.message));
             }
           };
           reader.readAsDataURL(file);
-        });
-        wrap.appendChild(div);
-      }
+        }
+      };
+      document.querySelectorAll('#galleryThumbs .gallery-thumb input[type="file"]').forEach(fileInput => {
+        fileInput.onchange = async () => {
+          const file = fileInput.files && fileInput.files[0];
+          if (!file) return;
+          const slot = fileInput.getAttribute('data-slot');
+          const reader = new FileReader();
+          reader.onload = async () => {
+            try {
+              const { url } = await api('/upload', { method: 'POST', body: { key: String(slot), dataUrl: reader.result } });
+              setSlotPreview(Number(slot), url);
+            } catch (err) {
+              alert('업로드 실패: ' + (err.data && err.data.error || err.message));
+            }
+          };
+          reader.readAsDataURL(file);
+          fileInput.value = '';
+        };
+      });
     }
 
     document.getElementById('saveBtn').addEventListener('click', async () => {
