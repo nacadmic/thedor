@@ -31,15 +31,34 @@ module.exports = async function handler(req, res) {
 
   if (req.method === 'GET') {
     try {
-      const stored = await getStoredContent();
       const defaultContent = getDefaultContent();
-      const data = stored || defaultContent;
-      // 저장된 갤러리가 비어 있으면 default로 복구 (한 번이라도 빈 저장 되면 사진 안 뜨는 것 방지)
-      const gallery = data.home && data.home.galleryImages;
-      const hasAnyImage = gallery && Object.keys(gallery).some((k) => gallery[k] && String(gallery[k]).trim());
-      if (!hasAnyImage && defaultContent.home && defaultContent.home.galleryImages) {
-        data.home = { ...data.home, galleryImages: { ...defaultContent.home.galleryImages } };
+      const stored = await getStoredContent();
+      // default 위에 stored 겹침. 없거나 빈 값이면 default 유지 (갤러리 꼬임 방지)
+      function mergeWithDefault(storedObj, defaultObj) {
+        if (!defaultObj || typeof defaultObj !== 'object' || Array.isArray(defaultObj)) return storedObj || defaultObj;
+        const out = { ...defaultObj };
+        if (!storedObj || typeof storedObj !== 'object') return out;
+        for (const k of Object.keys(storedObj)) {
+          if (storedObj[k] === undefined || storedObj[k] === null) continue;
+          if (k === 'galleryImages' && typeof storedObj[k] === 'object' && !Array.isArray(storedObj[k])) {
+            const defGal = defaultObj.galleryImages || {};
+            const stGal = storedObj.galleryImages || {};
+            out[k] = {};
+            for (let i = 1; i <= 24; i++) {
+              const key = String(i);
+              out[k][key] = (stGal[key] && String(stGal[key]).trim()) || (defGal[key] && String(defGal[key]).trim()) || '';
+            }
+            continue;
+          }
+          if (defaultObj[k] && typeof defaultObj[k] === 'object' && !Array.isArray(defaultObj[k]) && storedObj[k] && typeof storedObj[k] === 'object') {
+            out[k] = mergeWithDefault(storedObj[k], defaultObj[k]);
+          } else {
+            out[k] = storedObj[k];
+          }
+        }
+        return out;
       }
+      const data = mergeWithDefault(stored || {}, defaultContent);
       return res.status(200).json(data);
     } catch (e) {
       return res.status(500).json({ error: 'Failed to load content' });

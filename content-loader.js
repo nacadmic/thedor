@@ -39,11 +39,13 @@
   function buildGallery(data) {
     var wrap = document.getElementById('galleryWrap');
     if (!wrap) return;
-    var imgs = (data && data.home && data.home.galleryImages) || {};
+    var raw = (data && data.home && data.home.galleryImages);
+    var imgs = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
     var keys = [];
     for (var i = 1; i <= 24; i++) {
       var k = String(i);
-      if (imgs[k] && String(imgs[k]).trim()) keys.push(k);
+      var v = imgs[k];
+      if (v && typeof v === 'string' && v.trim()) keys.push(k);
     }
     wrap.innerHTML = keys.map(function (key, i) {
       var large = i === 0 ? ' gallery-cell--large' : '';
