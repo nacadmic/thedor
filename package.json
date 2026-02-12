@@ -1,0 +1,7 @@
+{
+  "name": "theodore",
+  "private": true,
+  "dependencies": {
+    "@vercel/blob": "^0.28.0"
+  }
+}

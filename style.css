@@ -825,6 +825,10 @@ body.menu-open .menu-overlay {
   margin-bottom: 0;
 }
 
+.about-pre-line {
+  white-space: pre-line;
+}
+
 .section-reveal {
   opacity: 0;
   transform: translateY(36px);

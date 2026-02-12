@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About | theodore.</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=2">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -12,12 +12,12 @@
 <body>
   <header class="header">
     <div class="inner">
-      <a href="index.html" class="logo">theodore.</a>
+      <a href="index.html" class="logo" data-content="home.logo">theodore.</a>
       <nav class="nav">
-        <a href="index.html">Home</a>
-        <a href="index.html#gallery">Identity</a>
-        <a href="about.html">About</a>
-        <a href="https://www.instagram.com/theodor.e._/?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" class="nav-ig" aria-label="인스타그램">
+        <a href="index.html" data-content="home.navHome">Home</a>
+        <a href="index.html#gallery" data-content="home.navIdentity">Identity</a>
+        <a href="about.html" data-content="home.navAbout">About</a>
+        <a href="https://www.instagram.com/theodor.e._/?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" class="nav-ig" aria-label="인스타그램" data-content-href="meta.instagramUrl">
           <span class="ig-icon">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.077-4.358.2-6.78 2.618-6.98 6.98-.063 1.281-.076 1.689-.076 4.943 0 3.259.014 3.668.076 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.063 1.689.076 4.948.076 3.259 0 3.668-.014 4.948-.076 4.354-.2 6.782-2.618 6.979-6.98.063-1.28.076-1.689.076-4.948 0-3.259-.014-3.667-.076-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.06-1.69-.076-4.949-.076zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" fill="url(#ig)"/><defs><linearGradient id="ig" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f9ed32"/><stop offset="0.5" stop-color="#e1306c"/><stop offset="1" stop-color="#833ab4"/></linearGradient></defs></svg>
           </span>
@@ -33,21 +33,21 @@
 
   <div class="menu-overlay" aria-hidden="true">
     <nav class="menu-nav">
-      <a href="index.html">Home</a>
-      <a href="index.html#gallery">Identity</a>
-      <a href="about.html">About</a>
-      <a href="https://www.instagram.com/theodor.e._/?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" class="menu-ig">Contact</a>
+      <a href="index.html" data-content="home.navHome">Home</a>
+      <a href="index.html#gallery" data-content="home.navIdentity">Identity</a>
+      <a href="about.html" data-content="home.navAbout">About</a>
+      <a href="https://www.instagram.com/theodor.e._/?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" class="menu-ig" data-content="home.menuContact" data-content-href="meta.instagramUrl">Contact</a>
     </nav>
   </div>
 
   <main class="page-about">
     <section class="about-page-section">
       <div class="inner">
-        <h1 class="about-page-title">about.</h1>
+        <h1 class="about-page-title" data-content="about.pageTitle">about.</h1>
         <div class="about-page-content">
-          <p><strong>테오도르(Theodor)</strong>는 마음을 기록하는 순간을 소중히 여기는 문구 브랜드입니다. 포근한 양과 용기를 품은 호랑이 캐릭터처럼, 누군가의 하루에 작은 위로와 용기를 전하는 제품을 만들고 있습니다.</p>
-          <p>우리는 쓰고, 붙이고, 간직하는 모든 순간이 자신을 이해하고 표현하는 시간이라고 믿습니다. 테오도르는 단순한 문구를 넘어, 감정과 이야기를 담아낼 수 있는 경험을 제안합니다.</p>
-          <p>일상의 작은 순간들이 더 따뜻하게 기억될 수 있도록 —<br>테오도르는 그 곁을 함께합니다.</p>
+          <p data-content="about.paragraph1"><strong>테오도르(Theodor)</strong>는 마음을 기록하는 순간을 소중히 여기는 문구 브랜드입니다. 포근한 양과 용기를 품은 호랑이 캐릭터처럼, 누군가의 하루에 작은 위로와 용기를 전하는 제품을 만들고 있습니다.</p>
+          <p data-content="about.paragraph2">우리는 쓰고, 붙이고, 간직하는 모든 순간이 자신을 이해하고 표현하는 시간이라고 믿습니다. 테오도르는 단순한 문구를 넘어, 감정과 이야기를 담아낼 수 있는 경험을 제안합니다.</p>
+          <p class="about-pre-line" data-content="about.paragraph3">일상의 작은 순간들이 더 따뜻하게 기억될 수 있도록 —\n테오도르는 그 곁을 함께합니다.</p>
         </div>
       </div>
     </section>
@@ -55,10 +55,11 @@
 
   <footer class="footer">
     <div class="inner">
-      <p class="copyright">© theodore.</p>
+      <p class="copyright" data-content="about.footerCopyright">© theodore.</p>
     </div>
   </footer>
 
-  <script src="main.js"></script>
+  <script src="content-loader.js?v=2"></script>
+  <script src="main.js?v=2"></script>
 </body>
 </html>

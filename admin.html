@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>관리자 | theodore.</title>
+  <link rel="stylesheet" href="style.css?v=2">
+  <style>
+    .admin-wrap { max-width: 720px; margin: 0 auto; padding: 40px 24px; }
+    .admin-section { margin-bottom: 32px; }
+    .admin-section h2 { font-size: 1.1rem; margin-bottom: 12px; color: #333; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    .admin-field { margin-bottom: 16px; }
+    .admin-field label { display: block; font-size: 0.85rem; color: #666; margin-bottom: 4px; }
+    .admin-field input[type="text"], .admin-field input[type="url"], .admin-field textarea { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
+    .admin-field textarea { min-height: 80px; resize: vertical; }
+    .admin-field .img-preview { max-width: 120px; max-height: 120px; object-fit: cover; border-radius: 8px; margin-top: 8px; }
+    .admin-actions { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
+    .btn { padding: 12px 24px; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 500; }
+    .btn-primary { background: linear-gradient(135deg, #e1306c, #833ab4); color: #fff; }
+    .btn-secondary { background: #f0f0f0; color: #333; }
+    .login-box { max-width: 360px; margin: 80px auto; padding: 32px; border: 1px solid #eee; border-radius: 16px; box-shadow: 0 12px 48px rgba(0,0,0,0.08); }
+    .login-box h1 { font-size: 1.25rem; margin-bottom: 20px; }
+    .login-box input { width: 100%; padding: 12px; margin-bottom: 16px; border: 1px solid #ddd; border-radius: 8px; }
+    .login-error { color: #c00; font-size: 0.9rem; margin-bottom: 12px; }
+    .admin-status { font-size: 0.85rem; color: #0a0; margin-bottom: 16px; }
+  </style>
+</head>
+<body>
+  <div class="admin-wrap">
+    <div id="loginView" class="login-box">
+      <h1>관리자 로그인</h1>
+      <p id="loginError" class="login-error" style="display:none;"></p>
+      <input type="password" id="loginPassword" placeholder="비밀번호" autocomplete="current-password">
+      <button type="button" class="btn btn-primary" id="loginBtn" style="width:100%">로그인</button>
+    </div>
+
+    <div id="adminView" style="display:none;">
+      <h1 style="margin-bottom:24px">콘텐츠 수정</h1>
+      <p id="adminStatus" class="admin-status"></p>
+
+      <section class="admin-section">
+        <h2>공통</h2>
+        <div class="admin-field">
+          <label>사이트 타이틀 (브라우저 탭)</label>
+          <input type="text" id="meta.siteTitle" data-key="meta.siteTitle">
+        </div>
+        <div class="admin-field">
+          <label>인스타그램 URL</label>
+          <input type="url" id="meta.instagramUrl" data-key="meta.instagramUrl">
+        </div>
+      </section>
+
+      <section class="admin-section">
+        <h2>메인 페이지</h2>
+        <div class="admin-field">
+          <label>로고 텍스트</label>
+          <input type="text" id="home.logo" data-key="home.logo">
+        </div>
+        <div class="admin-field">
+          <label>네비: Home</label>
+          <input type="text" id="home.navHome" data-key="home.navHome">
+        </div>
+        <div class="admin-field">
+          <label>네비: Identity</label>
+          <input type="text" id="home.navIdentity" data-key="home.navIdentity">
+        </div>
+        <div class="admin-field">
+          <label>네비: About</label>
+          <input type="text" id="home.navAbout" data-key="home.navAbout">
+        </div>
+        <div class="admin-field">
+          <label>모바일 메뉴: Contact</label>
+          <input type="text" id="home.menuContact" data-key="home.menuContact">
+        </div>
+        <div class="admin-field">
+          <label>히어로 타이틀</label>
+          <input type="text" id="home.heroTitle" data-key="home.heroTitle">
+        </div>
+        <div class="admin-field">
+          <label>히어로 설명</label>
+          <input type="text" id="home.heroDesc" data-key="home.heroDesc">
+        </div>
+        <div class="admin-field">
+          <label>Coming soon 문구</label>
+          <input type="text" id="home.heroComing" data-key="home.heroComing">
+        </div>
+        <div class="admin-field">
+          <label>갤러리 섹션 제목</label>
+          <input type="text" id="home.galleryTitle" data-key="home.galleryTitle">
+        </div>
+        <div class="admin-field">
+          <label>갤러리 이미지 대체 텍스트</label>
+          <input type="text" id="home.galleryAlt" data-key="home.galleryAlt">
+        </div>
+        <div class="admin-field">
+          <label>푸터 저작권</label>
+          <input type="text" id="home.footerCopyright" data-key="home.footerCopyright">
+        </div>
+      </section>
+
+      <section class="admin-section">
+        <h2>갤러리 이미지 (1~9)</h2>
+        <div id="galleryImagesFields"></div>
+      </section>
+
+      <section class="admin-section">
+        <h2>About 페이지</h2>
+        <div class="admin-field">
+          <label>페이지 제목</label>
+          <input type="text" id="about.pageTitle" data-key="about.pageTitle">
+        </div>
+        <div class="admin-field">
+          <label>첫 번째 문단</label>
+          <textarea id="about.paragraph1" data-key="about.paragraph1"></textarea>
+        </div>
+        <div class="admin-field">
+          <label>두 번째 문단</label>
+          <textarea id="about.paragraph2" data-key="about.paragraph2"></textarea>
+        </div>
+        <div class="admin-field">
+          <label>세 번째 문단</label>
+          <textarea id="about.paragraph3" data-key="about.paragraph3"></textarea>
+        </div>
+        <div class="admin-field">
+          <label>푸터 저작권</label>
+          <input type="text" id="about.footerCopyright" data-key="about.footerCopyright">
+        </div>
+      </section>
+
+      <div class="admin-actions">
+        <button type="button" class="btn btn-primary" id="saveBtn">저장</button>
+        <a href="index.html" class="btn btn-secondary">사이트 보기</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = '';
+    const TOKEN_KEY = 'admin_token';
+
+    function getToken() { return sessionStorage.getItem(TOKEN_KEY); }
+    function setToken(t) { if (t) sessionStorage.setItem(TOKEN_KEY, t); else sessionStorage.removeItem(TOKEN_KEY); }
+
+    async function api(path, options = {}) {
+      const url = (API || (location.origin + '/api')) + path;
+      const headers = { ...options.headers };
+      if (options.body && typeof options.body === 'object' && !(options.body instanceof FormData)) {
+        headers['Content-Type'] = 'application/json';
+        options.body = JSON.stringify(options.body);
+      }
+      const token = getToken();
+      if (token) headers['Authorization'] = 'Bearer ' + token;
+      const res = await fetch(url, { ...options, headers });
+      const text = await res.text();
+      let data;
+      try { data = JSON.parse(text); } catch { data = text; }
+      if (!res.ok) throw { status: res.status, data };
+      return data;
+    }
+
+    function setByKey(obj, key, value) {
+      const parts = key.split('.');
+      let cur = obj;
+      for (let i = 0; i < parts.length - 1; i++) {
+        const p = parts[i];
+        if (!cur[p]) cur[p] = {};
+        cur = cur[p];
+      }
+      cur[parts[parts.length - 1]] = value;
+    }
+    function getByKey(obj, key) {
+      return key.split('.').reduce((o, p) => o && o[p], obj);
+    }
+
+    // Login
+    document.getElementById('loginBtn').addEventListener('click', async () => {
+      const password = document.getElementById('loginPassword').value.trim();
+      document.getElementById('loginError').style.display = 'none';
+      if (!password) {
+        document.getElementById('loginError').textContent = '비밀번호를 입력하세요.';
+        document.getElementById('loginError').style.display = 'block';
+        return;
+      }
+      try {
+        const { token } = await api('/login', { method: 'POST', body: { password } });
+        setToken(token);
+        document.getElementById('loginView').style.display = 'none';
+        document.getElementById('adminView').style.display = 'block';
+        loadContent();
+      } catch (e) {
+        document.getElementById('loginError').textContent = e.data && e.data.error || '로그인 실패';
+        document.getElementById('loginError').style.display = 'block';
+      }
+    });
+
+    let currentContent = null;
+
+    async function loadContent() {
+      try {
+        currentContent = await api('/content');
+        document.getElementById('adminStatus').textContent = '콘텐츠를 불러왔습니다.';
+        fillForm(currentContent);
+      } catch (e) {
+        document.getElementById('adminStatus').textContent = '콘텐츠 로드 실패: ' + (e.data && e.data.error || e.message);
+      }
+    }
+
+    function fillForm(data) {
+      document.querySelectorAll('[data-key]').forEach(el => {
+        const key = el.getAttribute('data-key');
+        const val = getByKey(data, key);
+        if (val !== undefined && val !== null) {
+          if (el.tagName === 'TEXTAREA') el.value = val;
+          else el.value = val;
+        }
+      });
+      const wrap = document.getElementById('galleryImagesFields');
+      wrap.innerHTML = '';
+      const imgs = (data.home && data.home.galleryImages) || {};
+      for (let i = 1; i <= 9; i++) {
+        const div = document.createElement('div');
+        div.className = 'admin-field';
+        div.innerHTML = `
+          <label>이미지 ${i}</label>
+          <input type="text" id="home.galleryImages.${i}" data-key="home.galleryImages.${i}" placeholder="URL 또는 새 파일 선택" style="margin-bottom:4px">
+          <input type="file" accept="image/*" data-key="${i}" style="display:block; margin-top:4px">
+          <img class="img-preview" id="preview-${i}" alt="" style="display:none">
+        `;
+        const urlInput = div.querySelector('input[type="text"]');
+        const fileInput = div.querySelector('input[type="file"]');
+        const preview = div.querySelector('.img-preview');
+        urlInput.value = imgs[String(i)] || '';
+        if (urlInput.value) {
+          preview.src = urlInput.value;
+          preview.style.display = 'block';
+        }
+        fileInput.addEventListener('change', async () => {
+          const file = fileInput.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = async () => {
+            try {
+              const { url } = await api('/upload', {
+                method: 'POST',
+                body: { key: String(i), dataUrl: reader.result },
+              });
+              urlInput.value = url;
+              preview.src = url;
+              preview.style.display = 'block';
+            } catch (err) {
+              alert('업로드 실패: ' + (err.data && err.data.error || err.message));
+            }
+          };
+          reader.readAsDataURL(file);
+        });
+        wrap.appendChild(div);
+      }
+    }
+
+    document.getElementById('saveBtn').addEventListener('click', async () => {
+      const data = { meta: {}, home: {}, about: {} };
+      document.querySelectorAll('#adminView [data-key]').forEach(el => {
+        const key = el.getAttribute('data-key');
+        if (!key || el.type === 'file') return;
+        const val = (el.tagName === 'TEXTAREA' ? el.value : el.value).trim();
+        setByKey(data, key, val);
+      });
+      try {
+        await api('/content', { method: 'POST', body: data });
+        document.getElementById('adminStatus').textContent = '저장되었습니다.';
+        document.getElementById('adminStatus').style.color = '#0a0';
+      } catch (e) {
+        if (e.status === 401) {
+          setToken(null);
+          document.getElementById('adminView').style.display = 'none';
+          document.getElementById('loginView').style.display = 'block';
+          document.getElementById('loginError').textContent = '세션이 만료되었습니다. 다시 로그인하세요.';
+          document.getElementById('loginError').style.display = 'block';
+          return;
+        }
+        document.getElementById('adminStatus').textContent = '저장 실패: ' + (e.data && e.data.error || e.message);
+        document.getElementById('adminStatus').style.color = '#c00';
+      }
+    });
+
+    if (getToken()) {
+      document.getElementById('loginView').style.display = 'none';
+      document.getElementById('adminView').style.display = 'block';
+      loadContent();
+    }
+  </script>
+</body>
+</html>
