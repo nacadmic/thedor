@@ -19,6 +19,7 @@ module.exports = async function handler(req, res) {
   const submitted = body.password || '';
 
   if (submitted !== password) {
+    await new Promise((r) => setTimeout(r, 2500));
     return res.status(401).json({ error: 'Invalid password' });
   }
 

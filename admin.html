@@ -22,7 +22,9 @@
     .login-box h1 { font-size: 1.25rem; margin-bottom: 20px; }
     .login-box input { width: 100%; padding: 12px; margin-bottom: 16px; border: 1px solid #ddd; border-radius: 8px; }
     .login-error { color: #c00; font-size: 0.9rem; margin-bottom: 12px; }
-    .admin-status { font-size: 0.85rem; color: #0a0; margin-bottom: 16px; }
+    .admin-status { font-size: 0.9rem; margin-bottom: 16px; min-height: 1.2em; }
+    .admin-status.success { color: #0a0; font-weight: 500; padding: 8px 12px; background: #e8f5e9; border-radius: 8px; display: inline-block; }
+    .admin-status.error { color: #c00; }
   </style>
 </head>
 <body>
@@ -99,7 +101,8 @@
       </section>
 
       <section class="admin-section">
-        <h2>갤러리 이미지 (1~9)</h2>
+        <h2>갤러리 이미지 (1~24)</h2>
+        <p class="admin-field" style="margin-bottom:8px;color:#666;font-size:0.85rem">최대 24장까지 등록할 수 있습니다. URL 입력 또는 파일 업로드.</p>
         <div id="galleryImagesFields"></div>
       </section>
 
@@ -110,16 +113,8 @@
           <input type="text" id="about.pageTitle" data-key="about.pageTitle">
         </div>
         <div class="admin-field">
-          <label>첫 번째 문단</label>
-          <textarea id="about.paragraph1" data-key="about.paragraph1"></textarea>
-        </div>
-        <div class="admin-field">
-          <label>두 번째 문단</label>
-          <textarea id="about.paragraph2" data-key="about.paragraph2"></textarea>
-        </div>
-        <div class="admin-field">
-          <label>세 번째 문단</label>
-          <textarea id="about.paragraph3" data-key="about.paragraph3"></textarea>
+          <label>본문 (한 문단, 줄바꿈은 그대로 표시됨)</label>
+          <textarea id="about.body" data-key="about.body" style="min-height:160px"></textarea>
         </div>
         <div class="admin-field">
           <label>푸터 저작권</label>
@@ -198,17 +193,21 @@
     async function loadContent() {
       try {
         currentContent = await api('/content');
-        document.getElementById('adminStatus').textContent = '콘텐츠를 불러왔습니다.';
+        document.getElementById('adminStatus').textContent = '콘텐츠를 불러왔습니다.'; document.getElementById('adminStatus').className = 'admin-status';
         fillForm(currentContent);
       } catch (e) {
-        document.getElementById('adminStatus').textContent = '콘텐츠 로드 실패: ' + (e.data && e.data.error || e.message);
+        document.getElementById('adminStatus').textContent = '콘텐츠 로드 실패: ' + (e.data && e.data.error || e.message); document.getElementById('adminStatus').className = 'admin-status error';
       }
     }
 
     function fillForm(data) {
       document.querySelectorAll('[data-key]').forEach(el => {
         const key = el.getAttribute('data-key');
-        const val = getByKey(data, key);
+        let val = getByKey(data, key);
+        if (key === 'about.body' && (val === undefined || val === null) && data.about) {
+          const p = data.about;
+          val = [p.paragraph1, p.paragraph2, p.paragraph3].filter(Boolean).join('\n\n');
+        }
         if (val !== undefined && val !== null) {
           if (el.tagName === 'TEXTAREA') el.value = val;
           else el.value = val;
@@ -217,7 +216,7 @@
       const wrap = document.getElementById('galleryImagesFields');
       wrap.innerHTML = '';
       const imgs = (data.home && data.home.galleryImages) || {};
-      for (let i = 1; i <= 9; i++) {
+      for (let i = 1; i <= 24; i++) {
         const div = document.createElement('div');
         div.className = 'admin-field';
         div.innerHTML = `
@@ -267,8 +266,10 @@
       });
       try {
         await api('/content', { method: 'POST', body: data });
-        document.getElementById('adminStatus').textContent = '저장되었습니다.';
-        document.getElementById('adminStatus').style.color = '#0a0';
+        const statusEl = document.getElementById('adminStatus');
+        statusEl.textContent = '저장되었습니다.';
+        statusEl.className = 'admin-status success';
+        statusEl.style.color = '';
       } catch (e) {
         if (e.status === 401) {
           setToken(null);
@@ -278,8 +279,9 @@
           document.getElementById('loginError').style.display = 'block';
           return;
         }
-        document.getElementById('adminStatus').textContent = '저장 실패: ' + (e.data && e.data.error || e.message);
-        document.getElementById('adminStatus').style.color = '#c00';
+        const statusEl = document.getElementById('adminStatus');
+        statusEl.textContent = '저장 실패: ' + (e.data && e.data.error || e.message);
+        statusEl.className = 'admin-status error';
       }
     });
 

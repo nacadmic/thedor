@@ -8,6 +8,10 @@
     document.querySelectorAll('[data-content]').forEach(function (el) {
       var key = el.getAttribute('data-content');
       var val = getByKey(data, key);
+      if (key === 'about.body' && (val === undefined || val === null) && data.about) {
+        var p = data.about;
+        val = [p.paragraph1, p.paragraph2, p.paragraph3].filter(Boolean).join('\n\n');
+      }
       if (val === undefined || val === null) return;
       if (el.tagName === 'IMG') {
         el.src = val;
@@ -32,11 +36,28 @@
     }
   }
 
+  function buildGallery(data) {
+    var wrap = document.getElementById('galleryWrap');
+    if (!wrap) return;
+    var imgs = (data && data.home && data.home.galleryImages) || {};
+    var keys = Object.keys(imgs).filter(function (k) { return imgs[k]; }).sort(function (a, b) { return Number(a) - Number(b); });
+    wrap.innerHTML = keys.map(function (key, i) {
+      var large = i === 0 ? ' gallery-cell--large' : '';
+      return '<div class="gallery-cell' + large + '"><div class="gallery-item gallery-item--contain reveal">' +
+        '<img src="" alt="" data-content="home.galleryImages.' + key + '" data-content-alt="home.galleryAlt"></div></div>';
+    }).join('');
+  }
+
   var apiBase = location.origin + '/api';
   fetch(apiBase + '/content')
     .then(function (r) { return r.json(); })
-    .then(applyContent)
+    .then(function (data) {
+      buildGallery(data);
+      applyContent(data);
+      window.dispatchEvent(new Event('scroll'));
+    })
     .catch(function () {
+      buildGallery(null);
       applyContent(null);
     });
 })();
