@@ -14,7 +14,11 @@
       }
       if (val === undefined || val === null) return;
       if (el.tagName === 'IMG') {
-        el.src = val;
+        var imgSrc = val;
+        if (typeof imgSrc === 'string' && imgSrc.indexOf('./') === 0 && typeof location !== 'undefined' && location.origin) {
+          imgSrc = location.origin + imgSrc.slice(1);
+        }
+        el.src = imgSrc;
         var altKey = el.getAttribute('data-content-alt');
         if (altKey) el.alt = getByKey(data, altKey) || el.alt;
       } else {
@@ -36,6 +40,11 @@
     }
   }
 
+  var FALLBACK_GALLERY = {
+    '1': './images/1.jpg', '2': './images/2.png', '3': './images/3.png', '4': './images/4.jpg',
+    '5': './images/5.png', '6': './images/6.jpg', '7': './images/7.png', '8': './images/8.jpg', '9': './images/9.png'
+  };
+
   function buildGallery(data) {
     var wrap = document.getElementById('galleryWrap');
     if (!wrap) return;
@@ -47,23 +56,31 @@
       var v = imgs[k];
       if (v && typeof v === 'string' && v.trim()) keys.push(k);
     }
+    if (keys.length === 0) {
+      imgs = FALLBACK_GALLERY;
+      keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    }
     wrap.innerHTML = keys.map(function (key, i) {
       var large = i === 0 ? ' gallery-cell--large' : '';
-      return '<div class="gallery-cell' + large + '"><div class="gallery-item gallery-item--contain reveal">' +
-        '<img src="" alt="" data-content="home.galleryImages.' + key + '" data-content-alt="home.galleryAlt"></div></div>';
+      var src = (imgs[key] && String(imgs[key]).trim()) || '';
+      if (src.indexOf('./') === 0) src = (typeof location !== 'undefined' && location.origin ? location.origin : '') + src.slice(1);
+      var srcAttr = src ? ' src="' + src.replace(/"/g, '&quot;') + '"' : '';
+      return '<div class="gallery-cell' + large + '"><div class="gallery-item gallery-item--contain reveal visible">' +
+        '<img' + srcAttr + ' alt="" data-content="home.galleryImages.' + key + '" data-content-alt="home.galleryAlt"></div></div>';
     }).join('');
   }
 
   var apiBase = location.origin + '/api';
   fetch(apiBase + '/content')
-    .then(function (r) { return r.json(); })
+    .then(function (r) { return r.ok ? r.json() : null; })
     .then(function (data) {
-      buildGallery(data);
-      applyContent(data);
-      window.dispatchEvent(new Event('scroll'));
+      buildGallery(data || null);
+      if (data) applyContent(data);
+      setTimeout(function () {
+        window.dispatchEvent(new Event('scroll'));
+      }, 100);
     })
     .catch(function () {
       buildGallery(null);
-      applyContent(null);
     });
 })();
