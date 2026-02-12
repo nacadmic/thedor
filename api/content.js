@@ -61,7 +61,17 @@ module.exports = async function handler(req, res) {
         }
         return out;
       }
-      const merged = deepMerge(defaultContent, body);
+      let merged = deepMerge(defaultContent, body);
+      // 갤러리는 1~24 번호 키를 그대로 유지 (10 이상 키 유실 방지)
+      if (body.home && body.home.galleryImages && typeof body.home.galleryImages === 'object') {
+        merged = { ...merged, home: { ...merged.home } };
+        const normalized = {};
+        for (let i = 1; i <= 24; i++) {
+          const k = String(i);
+          normalized[k] = body.home.galleryImages[k] && String(body.home.galleryImages[k]).trim() || '';
+        }
+        merged.home.galleryImages = normalized;
+      }
       const blob = await put(CONTENT_KEY, JSON.stringify(merged), {
         access: 'public',
         addRandomSuffix: false,

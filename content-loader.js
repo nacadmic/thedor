@@ -40,7 +40,11 @@
     var wrap = document.getElementById('galleryWrap');
     if (!wrap) return;
     var imgs = (data && data.home && data.home.galleryImages) || {};
-    var keys = Object.keys(imgs).filter(function (k) { return imgs[k]; }).sort(function (a, b) { return Number(a) - Number(b); });
+    var keys = [];
+    for (var i = 1; i <= 24; i++) {
+      var k = String(i);
+      if (imgs[k] && String(imgs[k]).trim()) keys.push(k);
+    }
     wrap.innerHTML = keys.map(function (key, i) {
       var large = i === 0 ? ' gallery-cell--large' : '';
       return '<div class="gallery-cell' + large + '"><div class="gallery-item gallery-item--contain reveal">' +
