@@ -4,11 +4,11 @@ const REDIRECT_URI = process.env.KAKAO_REDIRECT_URI || '';
 const REST_KEY = process.env.KAKAO_REST_KEY || '';
 const CLIENT_SECRET = process.env.KAKAO_CLIENT_SECRET || '';
 const ALLOWED_EMAILS = (process.env.ALLOWED_ADMIN_EMAILS || '')
-  .split(',')
+  .split(/[\s,]+/)
   .map((e) => e.trim().toLowerCase())
   .filter(Boolean);
 const ALLOWED_IDS = (process.env.ALLOWED_KAKAO_IDS || '')
-  .split(',')
+  .split(/[\s,]+/)
   .map((s) => String(s).trim())
   .filter(Boolean);
 
@@ -34,7 +34,7 @@ module.exports = async function handler(req, res) {
 
   const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body || {};
   const code = body.code || '';
-  const redirectUri = body.redirectUri || REDIRECT_URI;
+  const redirectUri = REDIRECT_URI;
 
   if (!code) {
     return res.status(400).json({ error: 'Missing code' });
@@ -57,6 +57,8 @@ module.exports = async function handler(req, res) {
     if (!tokenRes.ok || !tokenData.access_token) {
       return res.status(401).json({
         error: tokenData.error_description || tokenData.error || 'Kakao token failed',
+        kakaoError: tokenData.error,
+        kakaoErrorCode: tokenData.code,
       });
     }
 
@@ -66,7 +68,8 @@ module.exports = async function handler(req, res) {
     const me = await meRes.json();
     if (!meRes.ok) {
       return res.status(401).json({
-        error: me.msg || 'Failed to get user info',
+        error: me.msg || me.error_description || 'Failed to get user info',
+        kakaoError: me.code || me.error,
       });
     }
 
@@ -74,8 +77,8 @@ module.exports = async function handler(req, res) {
     const kakaoId = me.id ? String(me.id) : '';
     if (!isAllowed(email, kakaoId)) {
       return res.status(403).json({
-        error: '이 계정은 관리자로 등록되어 있지 않습니다.',
-        kakaoId: kakaoId || undefined,
+        error: '이 계정은 관리자로 등록되어 있지 않습니다. Vercel 환경변수 ALLOWED_ADMIN_EMAILS 또는 ALLOWED_KAKAO_IDS에 아래 값을 추가하세요.',
+        received: { email: email || '(없음)', kakaoId: kakaoId || '(없음)' },
       });
     }
 

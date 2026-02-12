@@ -207,7 +207,10 @@
         document.getElementById('adminView').style.display = 'block';
         loadContent();
       } catch (e) {
-        document.getElementById('loginError').textContent = e.data && e.data.error || '카카오 로그인 실패';
+        let msg = e.data && e.data.error || '카카오 로그인 실패';
+        if (e.data && (e.data.kakaoErrorCode || e.data.kakaoError)) msg += ' (카카오: ' + (e.data.kakaoErrorCode || '') + ' ' + (e.data.kakaoError || '') + ')';
+        if (e.data && e.data.received) msg += ' 받은값: ' + JSON.stringify(e.data.received);
+        document.getElementById('loginError').textContent = msg;
         document.getElementById('loginError').style.display = 'block';
         history.replaceState(null, '', location.pathname || '/admin');
       }
