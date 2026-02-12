@@ -189,7 +189,7 @@
       if (!publicConfig.kakaoRestKey || !publicConfig.redirectUri) return;
       const url = 'https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=' +
         encodeURIComponent(publicConfig.kakaoRestKey) + '&redirect_uri=' +
-        encodeURIComponent(publicConfig.redirectUri) + '&scope=account_email';
+        encodeURIComponent(publicConfig.redirectUri);
       location.href = url;
     });
 

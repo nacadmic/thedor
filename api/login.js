@@ -8,7 +8,7 @@ module.exports = async function handler(req, res) {
     return res.status(405).end();
   }
 
-  if (process.env.ALLOWED_ADMIN_EMAILS) {
+  if (process.env.ALLOWED_ADMIN_EMAILS || process.env.ALLOWED_KAKAO_IDS) {
     return res.status(403).json({
       error: '관리자는 카카오 로그인만 사용할 수 있습니다.',
     });

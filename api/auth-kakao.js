@@ -7,10 +7,15 @@ const ALLOWED_EMAILS = (process.env.ALLOWED_ADMIN_EMAILS || '')
   .split(',')
   .map((e) => e.trim().toLowerCase())
   .filter(Boolean);
+const ALLOWED_IDS = (process.env.ALLOWED_KAKAO_IDS || '')
+  .split(',')
+  .map((s) => String(s).trim())
+  .filter(Boolean);
 
-function isAllowed(email) {
-  if (!email || !ALLOWED_EMAILS.length) return false;
-  return ALLOWED_EMAILS.includes(String(email).trim().toLowerCase());
+function isAllowed(email, kakaoId) {
+  if (ALLOWED_IDS.length && kakaoId && ALLOWED_IDS.includes(String(kakaoId))) return true;
+  if (ALLOWED_EMAILS.length && email) return ALLOWED_EMAILS.includes(String(email).trim().toLowerCase());
+  return false;
 }
 
 module.exports = async function handler(req, res) {
@@ -21,9 +26,9 @@ module.exports = async function handler(req, res) {
     return res.status(405).end();
   }
 
-  if (!REST_KEY || !REDIRECT_URI || !ALLOWED_EMAILS.length) {
+  if (!REST_KEY || !REDIRECT_URI || (ALLOWED_EMAILS.length === 0 && ALLOWED_IDS.length === 0)) {
     return res.status(503).json({
-      error: 'Kakao admin login not configured. Set KAKAO_REST_KEY, KAKAO_REDIRECT_URI, ALLOWED_ADMIN_EMAILS.',
+      error: 'Kakao admin login not configured. Set KAKAO_REST_KEY, KAKAO_REDIRECT_URI, and ALLOWED_ADMIN_EMAILS or ALLOWED_KAKAO_IDS.',
     });
   }
 
@@ -66,9 +71,11 @@ module.exports = async function handler(req, res) {
     }
 
     const email = (me.kakao_account && me.kakao_account.email) || '';
-    if (!isAllowed(email)) {
+    const kakaoId = me.id ? String(me.id) : '';
+    if (!isAllowed(email, kakaoId)) {
       return res.status(403).json({
         error: '이 계정은 관리자로 등록되어 있지 않습니다.',
+        kakaoId: kakaoId || undefined,
       });
     }
 
