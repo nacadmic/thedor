@@ -6,9 +6,30 @@ const { verifyToken, getAuth } = require('./auth');
 const CONTENT_KEY = 'content.json';
 
 function getDefaultContent() {
-  const filePath = path.join(process.cwd(), 'content', 'default.json');
-  const raw = fs.readFileSync(filePath, 'utf8');
-  return JSON.parse(raw);
+  try {
+    const filePath = path.join(process.cwd(), 'content', 'default.json');
+    const raw = fs.readFileSync(filePath, 'utf8');
+    return JSON.parse(raw);
+  } catch {
+    return {
+      meta: { siteTitle: 'theodore.', instagramUrl: '' },
+      home: {
+        logo: 'theodore.',
+        navHome: 'Home',
+        navIdentity: 'Identity',
+        navAbout: 'About',
+        menuContact: 'Contact',
+        heroTitle: 'theodore.',
+        heroDesc: 'Stationery & more',
+        heroComing: 'Coming soon',
+        galleryTitle: 'Identity',
+        galleryImages: { 1: './images/1.jpg', 2: './images/2.png', 3: './images/3.png', 4: './images/4.jpg', 5: './images/5.png', 6: './images/6.jpg', 7: './images/7.png', 8: './images/8.jpg', 9: './images/9.png' },
+        galleryAlt: '작품',
+        footerCopyright: '© theodore.',
+      },
+      about: { pageTitle: 'about.', body: '', footerCopyright: '© theodore.' },
+    };
+  }
 }
 
 async function getStoredContent() {
@@ -33,32 +54,20 @@ module.exports = async function handler(req, res) {
     try {
       const defaultContent = getDefaultContent();
       const stored = await getStoredContent();
-      // default 위에 stored 겹침. 없거나 빈 값이면 default 유지 (갤러리 꼬임 방지)
-      function mergeWithDefault(storedObj, defaultObj) {
-        if (!defaultObj || typeof defaultObj !== 'object' || Array.isArray(defaultObj)) return storedObj || defaultObj;
-        const out = { ...defaultObj };
-        if (!storedObj || typeof storedObj !== 'object') return out;
-        for (const k of Object.keys(storedObj)) {
-          if (storedObj[k] === undefined || storedObj[k] === null) continue;
-          if (k === 'galleryImages' && typeof storedObj[k] === 'object' && !Array.isArray(storedObj[k])) {
-            const defGal = defaultObj.galleryImages || {};
-            const stGal = storedObj.galleryImages || {};
-            out[k] = {};
-            for (let i = 1; i <= 24; i++) {
-              const key = String(i);
-              out[k][key] = (stGal[key] && String(stGal[key]).trim()) || (defGal[key] && String(defGal[key]).trim()) || '';
-            }
-            continue;
-          }
-          if (defaultObj[k] && typeof defaultObj[k] === 'object' && !Array.isArray(defaultObj[k]) && storedObj[k] && typeof storedObj[k] === 'object') {
-            out[k] = mergeWithDefault(storedObj[k], defaultObj[k]);
-          } else {
-            out[k] = storedObj[k];
-          }
+      const data = stored
+        ? { ...stored, home: stored.home ? { ...stored.home } : {} }
+        : defaultContent;
+      if (stored) {
+        const gal = data.home.galleryImages;
+        const ok =
+          gal &&
+          typeof gal === 'object' &&
+          !Array.isArray(gal) &&
+          Object.keys(gal).some((k) => gal[k] && String(gal[k]).trim());
+        if (!ok && defaultContent.home && defaultContent.home.galleryImages) {
+          data.home.galleryImages = { ...defaultContent.home.galleryImages };
         }
-        return out;
       }
-      const data = mergeWithDefault(stored || {}, defaultContent);
       return res.status(200).json(data);
     } catch (e) {
       return res.status(500).json({ error: 'Failed to load content' });
