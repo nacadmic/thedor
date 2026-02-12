@@ -32,7 +32,14 @@ module.exports = async function handler(req, res) {
   if (req.method === 'GET') {
     try {
       const stored = await getStoredContent();
-      const data = stored || getDefaultContent();
+      const defaultContent = getDefaultContent();
+      const data = stored || defaultContent;
+      // 저장된 갤러리가 비어 있으면 default로 복구 (한 번이라도 빈 저장 되면 사진 안 뜨는 것 방지)
+      const gallery = data.home && data.home.galleryImages;
+      const hasAnyImage = gallery && Object.keys(gallery).some((k) => gallery[k] && String(gallery[k]).trim());
+      if (!hasAnyImage && defaultContent.home && defaultContent.home.galleryImages) {
+        data.home = { ...data.home, galleryImages: { ...defaultContent.home.galleryImages } };
+      }
       return res.status(200).json(data);
     } catch (e) {
       return res.status(500).json({ error: 'Failed to load content' });
@@ -62,13 +69,15 @@ module.exports = async function handler(req, res) {
         return out;
       }
       let merged = deepMerge(defaultContent, body);
-      // 갤러리는 1~24 번호 키를 그대로 유지 (10 이상 키 유실 방지)
+      // 갤러리는 1~24 번호 키 유지. body가 빈 값 보내도 기존 URL 덮어쓰지 않음
       if (body.home && body.home.galleryImages && typeof body.home.galleryImages === 'object') {
         merged = { ...merged, home: { ...merged.home } };
         const normalized = {};
+        const existing = merged.home.galleryImages || {};
         for (let i = 1; i <= 24; i++) {
           const k = String(i);
-          normalized[k] = body.home.galleryImages[k] && String(body.home.galleryImages[k]).trim() || '';
+          const fromBody = body.home.galleryImages[k] && String(body.home.galleryImages[k]).trim();
+          normalized[k] = fromBody || existing[k] || '';
         }
         merged.home.galleryImages = normalized;
       }
