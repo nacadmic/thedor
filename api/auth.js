@@ -11,15 +11,13 @@ function createToken(password) {
 
 function verifyToken(token) {
   if (!token) return false;
-  const password = process.env.ADMIN_PASSWORD;
-  if (!password) return false;
+  const secret = process.env.ADMIN_SECRET || process.env.ADMIN_PASSWORD || 'change-me';
   try {
     const decoded = Buffer.from(token, 'base64url').toString();
     const [ts, sig] = decoded.split('.');
     if (!ts || !sig) return false;
     const age = Date.now() - parseInt(ts, 10);
     if (age < 0 || age > TOKEN_MAX_AGE_MS) return false;
-    const secret = process.env.ADMIN_SECRET || password;
     const expected = crypto.createHmac('sha256', secret).update(ts).digest('hex');
     return sig === expected;
   } catch {
