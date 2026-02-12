@@ -189,7 +189,7 @@
       if (!publicConfig.kakaoRestKey || !publicConfig.redirectUri) return;
       const url = 'https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=' +
         encodeURIComponent(publicConfig.kakaoRestKey) + '&redirect_uri=' +
-        encodeURIComponent(publicConfig.redirectUri);
+        encodeURIComponent(publicConfig.redirectUri) + '&scope=account_email';
       location.href = url;
     });
 
@@ -209,7 +209,7 @@
       } catch (e) {
         let msg = e.data && e.data.error || '카카오 로그인 실패';
         if (e.data && (e.data.kakaoErrorCode || e.data.kakaoError)) msg += ' (카카오: ' + (e.data.kakaoErrorCode || '') + ' ' + (e.data.kakaoError || '') + ')';
-        if (e.data && e.data.received) msg += ' 받은값: ' + JSON.stringify(e.data.received);
+        if (e.data && e.data.copyPaste) msg += ' → ' + e.data.copyPaste;
         document.getElementById('loginError').textContent = msg;
         document.getElementById('loginError').style.display = 'block';
         history.replaceState(null, '', location.pathname || '/admin');

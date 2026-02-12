@@ -76,9 +76,11 @@ module.exports = async function handler(req, res) {
     const email = (me.kakao_account && me.kakao_account.email) || '';
     const kakaoId = me.id ? String(me.id) : '';
     if (!isAllowed(email, kakaoId)) {
+      const rec = { email: (email && email.trim()) || '(없음)', kakaoId: kakaoId || '(없음)' };
       return res.status(403).json({
-        error: '이 계정은 관리자로 등록되어 있지 않습니다. Vercel 환경변수 ALLOWED_ADMIN_EMAILS 또는 ALLOWED_KAKAO_IDS에 아래 값을 추가하세요.',
-        received: { email: email || '(없음)', kakaoId: kakaoId || '(없음)' },
+        error: '이 계정은 관리자로 등록되어 있지 않습니다. 아래 received 값을 그대로 Vercel 환경변수에 넣으세요. (이메일 없으면 ALLOWED_KAKAO_IDS에 kakaoId만)',
+        received: rec,
+        copyPaste: rec.email !== '(없음)' ? `ALLOWED_ADMIN_EMAILS=${rec.email}` : `ALLOWED_KAKAO_IDS=${rec.kakaoId}`,
       });
     }
 
