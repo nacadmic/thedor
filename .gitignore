@@ -1,6 +1,12 @@
+# Editor / IDE (do not commit)
 .cursor
+.cursorrules
+.cursorignore
 .vscode
 .idea
+*.code-workspace
+
+# System
 *.log
 .DS_Store
 Thumbs.db
