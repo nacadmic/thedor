@@ -283,7 +283,11 @@
         loadContent();
       } catch (e) {
         let msg = e.data && e.data.error || '카카오 로그인 실패';
-        if (e.data && (e.data.kakaoErrorCode || e.data.kakaoError)) msg += ' (카카오: ' + (e.data.kakaoErrorCode || '') + ' ' + (e.data.kakaoError || '') + ')';
+        if (e.data && e.data.rateLimit) {
+          msg = e.data.error || '카카오 토큰 요청 한도 초과. 5~10분 후 다시 시도해 주세요.';
+        } else if (e.data && (e.data.kakaoErrorCode || e.data.kakaoError)) {
+          msg += ' (카카오: ' + (e.data.kakaoErrorCode || '') + ' ' + (e.data.kakaoError || '') + ')';
+        }
         if (e.data && e.data.copyPaste) msg += ' → ' + e.data.copyPaste;
         document.getElementById('loginError').textContent = msg;
         document.getElementById('loginError').style.display = 'block';

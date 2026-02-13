@@ -55,10 +55,15 @@ module.exports = async function handler(req, res) {
 
     const tokenData = await tokenRes.json();
     if (!tokenRes.ok || !tokenData.access_token) {
-      return res.status(401).json({
-        error: tokenData.error_description || tokenData.error || 'Kakao token failed',
+      const desc = (tokenData.error_description || tokenData.error || '').toLowerCase();
+      const isRateLimit = desc.includes('rate limit');
+      return res.status(isRateLimit ? 429 : 401).json({
+        error: isRateLimit
+          ? '카카오 토큰 요청 한도 초과. 5~10분 후 다시 시도해 주세요.'
+          : (tokenData.error_description || tokenData.error || 'Kakao token failed'),
         kakaoError: tokenData.error,
         kakaoErrorCode: tokenData.code,
+        rateLimit: isRateLimit,
       });
     }
 
