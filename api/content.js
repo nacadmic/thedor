@@ -20,7 +20,7 @@ function getDefaultContent() {
         navAbout: 'About',
         menuContact: 'Contact',
         heroTitle: 'theodore.',
-        heroDesc: 'Stationery & more',
+        heroDesc: '',
         heroComing: 'Coming soon',
         galleryTitle: 'Identity',
         galleryImages: { 1: './images/1.jpg', 2: './images/2.png', 3: './images/3.png', 4: './images/4.jpg', 5: './images/5.png', 6: './images/6.jpg', 7: './images/7.png', 8: './images/8.jpg', 9: './images/9.png' },

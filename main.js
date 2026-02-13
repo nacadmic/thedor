@@ -1,4 +1,18 @@
 (function () {
+  /* 진입 이벤트: 오버레이 표시 후 사라짐 (모바일 포함) */
+  (function runEntrance() {
+    var overlay = document.getElementById('entranceOverlay');
+    if (!overlay) return;
+    document.body.classList.add('entrance-active');
+    setTimeout(function () {
+      overlay.classList.add('entrance-out');
+      overlay.addEventListener('transitionend', function onEnd() {
+        document.body.classList.remove('entrance-active');
+        overlay.remove();
+      }, { once: true });
+    }, 1100);
+  })();
+
   function closeMenu() {
     document.body.classList.remove('menu-open');
   }

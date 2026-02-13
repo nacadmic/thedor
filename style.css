@@ -34,6 +34,67 @@ body {
   position: relative;
 }
 
+body.entrance-active {
+  overflow: hidden;
+  height: 100vh;
+}
+
+/* 진입 이벤트 오버레이 */
+.entrance-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: #fafafa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.7s var(--ease-out), visibility 0.7s;
+  visibility: visible;
+  opacity: 1;
+}
+
+.entrance-overlay.entrance-out {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.entrance-logo {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 8vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+  opacity: 0;
+  animation: entranceLogoIn 0.6s var(--ease-out) 0.2s forwards;
+}
+
+.entrance-overlay.entrance-out .entrance-logo {
+  animation: entranceLogoOut 0.5s var(--ease-out) forwards;
+}
+
+@keyframes entranceLogoIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes entranceLogoOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+}
+
 .grain {
   position: fixed;
   inset: 0;
