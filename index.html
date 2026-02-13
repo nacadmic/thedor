@@ -11,7 +11,16 @@
 </head>
 <body>
   <div class="entrance-overlay" id="entranceOverlay" aria-hidden="true">
-    <span class="entrance-logo">theodore.</span>
+    <div class="entrance-content">
+      <div class="entrance-gauge-wrap">
+        <svg class="entrance-gauge" viewBox="0 0 100 100" aria-hidden="true">
+          <circle class="entrance-gauge-track" cx="50" cy="50" r="42" fill="none" stroke-width="3"/>
+          <circle class="entrance-gauge-fill" cx="50" cy="50" r="42" fill="none" stroke-width="3" stroke-dasharray="264" stroke-dashoffset="264"/>
+          <line class="entrance-clock-hand" x1="50" y1="50" x2="50" y2="18" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <span class="entrance-logo">theodore.</span>
+    </div>
   </div>
   <div class="grain" aria-hidden="true"></div>
   <header class="header">
